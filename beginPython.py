@@ -182,9 +182,27 @@ import math
 
 
 #Begin20◦. Найти расстояние между двумя точками с заданными координатами (x1, y1) и (x2, y2) на плоскости. Расстояние вычисляется по формуле √(x2 − x1)2 + (y2 − y1)2.
+#x1 = int(input())
+#y1 = int(input())
+#x2 = int(input())
+#y2 = int(input())
+#C = math.sqrt(math.fabs(x2-x1)**2+math.fabs(y2-y1)**2)
+#print('C = ', C)
+
+
+#Begin21◦. Даны координаты трех вершин треугольника: (x1, y1), (x2, y2), (x3, y3).Найти его периметр и площадь, используя формулу для расстояния между двумя точками на плоскости (см. задание Begin20). Для нахождения площади треугольника со сторонами a, b, c использовать формулу Герона: S = √p·(p − a)·(p − b)·(p − c),где p = (a + b + c)/2 — полупериметр.
 x1 = int(input())
 y1 = int(input())
 x2 = int(input())
 y2 = int(input())
-C = math.sqrt(math.fabs(x2-x1)**2+math.fabs(y2-y1)**2)
-print('C = ', C)
+x3 = int(input())
+y3 = int(input())
+a = math.sqrt(math.fabs(x2-x1)**2+math.fabs(y2-y1)**2)
+b = math.sqrt(math.fabs(x3-x2)**2+math.fabs(y3-y2)**2)
+c = math.sqrt(math.fabs(x1-x3)**2+math.fabs(y1-y3)**2)
+p = (a + b + c)/2
+S = math.sqrt(p*(p-a)*(p-b)*(p-c))
+print('a = ', a)
+print('b = ', b)
+print('c = ', c)
+print('S = ', S)
