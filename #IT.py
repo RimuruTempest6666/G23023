@@ -870,3 +870,66 @@ import math
 #    print('True')
 #else:
 #   print('False')
+
+
+#Boolean24◦. Даны числа A, B, C (число A не равно 0). Рассмотрев дискриминант D = B2 − 4·A·C, проверить истинность высказывания: «Квадратное уравнение A·x2 + B·x + C = 0 имеет вещественные корни».
+#A = int(input("A = "))
+#B = int(input("B = "))
+#C = int(input("C = "))
+#if A != 0:
+#    D = B**2 - 4*A*C
+#    if D>=0:
+#        print('True')
+#    else:
+#        print('False')
+#else:
+#    print('False')
+
+
+#Boolean25◦. Даны числа x, y. Проверить истинность высказывания: «Точка с координатами (x, y) лежит во второй координатной четверти».
+#x = int(input("x = "))
+#y = int(input("y = "))
+#if x<0 and y>0:
+#    print('True')
+#else:
+#   print('False')
+
+
+#Boolean26◦. Даны числа x, y. Проверить истинность высказывания: «Точка с координатами (x, y) лежит в четвертой координатной четверти»
+#x = int(input("x = "))
+#y = int(input("y = "))
+#if x>0 and y<0:
+#    print('True')
+#else:
+#   print('False')
+
+
+#Boolean27◦. Даны числа x, y. Проверить истинность высказывания: «Точка с координатами (x, y) лежит во второй или третьей координатной четверти».
+#x = int(input("x = "))
+#y = int(input("y = "))
+#if x<0 and y != 0:
+#    print('True')
+#else:
+#   print('False')
+
+
+#Boolean28◦. Даны числа x, y. Проверить истинность высказывания: «Точка с координатами (x, y) лежит в первой или третьей координатной четверти».
+#x = int(input("x = "))
+#y = int(input("y = "))
+#if x>0 and y>0 or x<0 and y<0:
+#    print('True')
+#else:
+#   print('False')
+
+
+#Boolean29◦Даны числа x, y, x1, y1, x2, y2. Проверить истинность высказывания: «Точка с координатами (x, y) лежит внутри прямоугольника, левая верхняя вершина которого имеет координаты (x1, y1), правая нижняя —(x2, y2), а стороны параллельны координатным осям».
+#x = int(input("x = "))
+#y = int(input("y = "))
+#x1 = int(input("x1 = "))
+#y1 = int(input("y1 = "))
+#x2 = int(input("x2 = "))
+#y2 = int(input("y2 = "))
+#if x1<x<x2 and y1<y<y2 or x1>x>x2 and y1<y<y2 or x1<x<x2 and y1>y>y2 or x1>x>x2 and y1>y>y2:
+#    print('True')
+#else:
+#   print('False')
