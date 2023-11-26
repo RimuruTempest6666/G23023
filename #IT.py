@@ -933,3 +933,69 @@ import math
 #    print('True')
 #else:
 #   print('False')
+
+
+#Boolean30◦. Даны целые числа a, b, c, являющиеся сторонами некоторого треугольника. Проверить истинность высказывания: «Треугольник со сторонами a, b, c является равносторонним».
+A = int(input("A = "))
+B = int(input("B = "))
+C = int(input("C = "))
+if A=B=C:
+    print('True')
+else:
+   print('False')
+
+
+#Boolean31◦. Даны целые числа a, b, c, являющиеся сторонами некоторого треугольника. Проверить истинность высказывания: «Треугольник со сторонами a, b, c является равнобедренным».
+A = int(input("A = "))
+B = int(input("B = "))
+C = int(input("C = "))
+if A = B != C or A = C != B or C = B != A:
+    print('True')
+else:
+   print('False')
+
+
+#Boolean32◦. Даны целые числа a, b, c, являющиеся сторонами некоторого треугольника. Проверить истинность высказывания: «Треугольник со сторонами a, b, c является прямоугольным».
+A = int(input("A = "))
+B = int(input("B = "))
+C = int(input("C = "))
+if A = math.sqrt(B**2 + C**2) or B = math.sqrt(A**2 + C**2) or C = math.sqrt(B**2 + A**2):
+    print('True')
+else:
+   print('False')
+
+
+#Boolean33◦. Даны целые числа a, b, c. Проверить истинность высказывания:«Существует треугольник со сторонами a, b, c».
+A = int(input("A = "))
+B = int(input("B = "))
+C = int(input("C = "))
+if A+B > C and A+C > B and C+B > A:
+    print('True')
+else:
+   print('False')
+
+
+#Boolean34◦. Даны координаты поля шахматной доски x, y (целые числа, лежащие в диапазоне 1–8). Учитывая, что левое нижнее поле доски (1,1) является черным, проверить истинность высказывания: «Данное поле является белым».
+x = int(input("x = "))
+y = int(input("y = "))
+if 1<=x<=8 and 1<=y<=8:
+    if x%2 = 1 and y%2 = 0 or x%2 = 1 and y%2 = 0:
+        print('True')
+    else:
+       print('False')
+else:
+    print('False')
+
+
+#Boolean35◦. Даны координаты двух различных полей шахматной доски x1, y1, x2, y2 (целые числа, лежащие в диапазоне 1–8). Проверить истинность высказывания: «Данные поля имеют одинаковый цвет».
+x1 = int(input("x1 = "))
+y1 = int(input("y1 = "))
+x2 = int(input("x2 = "))
+y2 = int(input("y2 = "))
+if 1<=x1<=8 and 1<=y1<=8 and 1<=x2<=8 and 1<=y2<=8:
+    if x1%2 = 1 and y1%2 = 0 and x2%2 = 1 and y2%2 = 0 or x1%2 = 1 and y1%2 = 0 and x2%2 = 1 and y2%2 = 0:
+        print('True')
+    else:
+       print('False')
+else:
+    print('False')
