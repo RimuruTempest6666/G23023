@@ -1935,15 +1935,816 @@ import math
 
 
 
-x = int(input("x = "))
-h = int(input("h = "))
-k = int(input("k = "))
-for i in range(x):
+#x = int(input("x = "))
+#h = int(input("h = "))
+#k = int(input("k = "))
+#for i in range(x):
+
+
+
+#1 spisok
+#marks = []
+#marksQty = int(input())
+#for i in range(marksQty):
+#    mark = int(input())
+#    marks.append(mark)
+#print(marks)
+
+
+#2
+##lst = []
+##for i in range(1,11):
+##    lst.append(i)
+##print(lst)
+
+
+##3
+##lst = []
+##for i in range(10,0,-1):
+##    lst.append(i)
+##print(lst)
+
+
+#4
+##d=0
+##lst = []
+##for i in range(1,11):
+##    d=d+2
+##    lst.append(d)
+##print(lst)
+
+
+##lst = []
+##for i in range(1,11):
+##    lst.append(i+2)
+##print(lst)
+
+
+#Array1. Дано целое число N (>0). Сформировать и вывести целочисленный массив размера N, содержащий N первых положительных нечетных чисел: 1, 3, 5, . . . .
+#d=1
+#lst = []
+#Qty = int(input())
+#for i in range(Qty):
+#    lst.append(d)
+#    d=d+2
+#print(lst)
+
+
+#Array2. Дано целое число N (>0). Сформировать и вывести целочисленный массив размера N, содержащий степени двойки от первой до N-й: 2, 4, 8, 16, . . . .
+#d=2
+#lst = []
+#Qty = int(input())
+#for i in range(Qty):
+#    lst.append(d)
+#    d=d*2
+#print(lst)
+
+
+#Array3. Дано целое число N (> 1), а также первый член A и разность D арифметической прогрессии. Сформировать и вывести массив размера N, содержащий N первых членов данной прогрессии:A, A+D, A+2·D, A+3·D, ....
+#d=int(input())
+#a = int(input())
+#g=a
+#j=1
+#lst = []
+#Qty = int(input())
+#for i in range(Qty):
+#    lst.append(g)
+#    g = a+d*j
+#    j=j+1
+#print(lst)
+
+
+#Array4. Дано целое число N (>1), а также первый член A и знаменатель D геометрической прогрессии. Сформировать и вывести массив размера N, содержащий N первых членов данной прогрессии:A, A·D, A·D2, A·D3, . . . .
+#d=int(input())
+#a = int(input())
+#g=a
+#j=1
+#lst = []
+#Qty = int(input())
+#for i in range(Qty):
+#    lst.append(g)
+#    g = a*(d*j)
+#    j=j+1
+#print(lst)
+
+
+#Array5. Дано целое число N (>2). Сформировать и вывести целочисленный массив размера N, содержащий N первых элементов последовательности чисел Фибоначчи FK: F1 =1, F2 =1, FK =FK−2 +FK−1, K =3,4,....
+
+#lst = [0, 1]
+#Qty = int(input())
+#for i in range(2,Qty):
+#    g = lst[-1] + lst[-2]
+#    lst.append(g)
+#print(lst)
+
+
+#Array6. Даны целые числа N (>2), A и B. Сформировать и вывести цело- численный массив размера N, первый элемент которого равен A, второй равен B, а каждый последующий элемент равен сумме всех предыдущих.
+#a = int(input())
+#b = int(input())
+#lst = [a, b]
+#Qty = int(input())
+#for i in range(2,Qty):
+#    g = sum(lst)
+#    lst.append(g)
+#print(lst)
+
+
+#Array7◦. Дан массив размера N. Вывести его элементы в обратном порядке.
+#lst = []
+#Qty = int(input())
+#for i in range(Qty,0,-1):
+#    lst.append(i)
+#print(lst)
+
+
+#Array8. Дан целочисленный массив размера N. Вывести все содержащиеся в данном массиве нечетные числа в порядке возрастания их индексов, а также их количество K.
+
+#lst = []
+#Qty = int(input())
+#for i in range(1,Qty+1):
+#    lst.append(i)
+    
+#K = len()
+#print()
+#print(K)
+
+from random import randint
+
+#1 Вывести из списка только отрицательные числа
+#lst = []
+#for i in range(15):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if num<0:
+#        print(num)
+
+
+#2 Подсчитать количество положительных чисел
+#h = []
+#lst = []
+#for i in range(15):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if num>0:
+#        h.append(num)
+#k = len(h)
+#print(k)  
+
+
+#3 Найти сумму четных чисел
+#lst = []
+#k=0
+#for i in range(15):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if num%2==0:
+#        k=k+num
+#print(k)
+
+
+#4 Найти произведение нечетных чисел
+#lst = []
+#k=1
+#for i in range(15):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if num%2 != 0:
+#        k=k*num
+#print(k)
+
+
+#5 Найти среднее арифметическое чисел, которые делятся на 5 и не делятся на 7
+#lst = []
+#k=[]
+#for i in range(15):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if num%5 == 0 and num%7 != 0:
+#        k.append(num)
+#t = len(k)
+#h = sum(k)
+#if t>0:
+#    g= h/t
+#    print(g)
+#else:
+#    print("net takih chisel")
+
+
+#Array18. Дан массив A ненулевых целых чисел размера 10. Вывести значение первого из тех его элементов AK, которые удовлетворяют неравенству AK < A10. Если таких элементов нет, то вывести 0.
+#lst = []
+#for i in range(10):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if num < lst[-1]:
+#        print(num)
+#        break
+#    else:
+#        print(0)
+
+
+#Array19. Дан целочисленный массив A размера 10. Вывести порядковый номер последнего из тех его элементов AK, которые удовлетворяют двойному неравенству A1 < AK < A10. Если таких элементов нет, то вывести 0.
+#lst = []
+#k = None
+#for i in range(10):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if lst[0] < num < lst[9]:
+#        print(num)
+#        k=num
+#        break
+#if k==None:
+#    print(0)
+
+
+#Array20.ДанмассивразмераN ицелыечислаK иL(1≤K ≤L≤N).Найти сумму элементов массива с номерами от K до L включительно.
+#print("1 <= K <= L <= N")
+#N = int(input("N= "))
+#K = int(input("K= "))
+#L = int(input("L= "))
+#lst = []
+#for i in range(N):
+#    lst.append(randint(-100,100))
+#if 1 <= K <= L <= N:
+#    g = sum(lst[K-1:L])
+#    print(g)
+#else:
+#    print("net")
+
+
+#Array21. Дан массив размера N и целые числа K и L (1 ≤ K ≤ L ≤ N). Найти среднее арифметическое элементов массива с номерами от K до L включительно.
+#print("1 <= K <= L <= N")
+#N = int(input("N= "))
+#K = int(input("K= "))
+#L = int(input("L= "))
+#lst = []
+#for i in range(N):
+#    lst.append(randint(-100,100))
+#if 1 <= K <= L <= N:
+#    g = sum(lst[K-1:L])
+#    h = len(lst[K-1:L])
+#    j = g/h
+#    print(j)
+#else:
+#    print("net")
+
+
+
+#Array22. Дан массив размера N и целые числа K и L (1 < K ≤ L ≤ N). Найти сумму всех элементов массива, кроме элементов с номерами от K до L включительно.
+#print("1 <= K <= L <= N")
+#N = int(input("N= "))
+#K = int(input("K= "))
+#L = int(input("L= "))
+#lst = []
+#for i in range(N):
+#    lst.append(randint(-100,100))
+#print(lst)
+#if 1 <= K <= L <= N:
+#    lst[K-1:L]=[]
+#    g = sum(lst)
+#    print(g)
+#else:
+#    print("net")
+
+
+#Array23. Дан массив размера N и целые числа K и L (1 < K ≤ L ≤ N). Найти среднее арифметическое всех элементов массива, кроме элементов с номерами от K до L включительно.
+#print("1 <= K <= L <= N")
+#N = int(input("N= "))
+#K = int(input("K= "))
+#L = int(input("L= "))
+#lst = []
+#for i in range(N):
+#    lst.append(randint(-100,100))
+#print(lst)
+#if 1 <= K <= L <= N:
+#    lst[K-1:L]=[]
+#    g = sum(lst)
+#    h = len(lst)
+#    j = g/h
+#    print(j)
+#else:
+#    print("net")
+
+
+
+
+#slovar
+#dict = {"Лев Толстой" : "Вoйна и мир",
+#        "Михаил Лермонтов" : "Молитва"}
+#ltBook = dict.get("Лев Толстой", "net takova avtora")
+#dict["Pushkin"] = "Skazka o care Saltane"
+#print(dict)
+
+
+#2 functia
+def sum(x, y):
+    res = x + y
+    return res
+
+#r = sum(2, 5)
+#print(r)
+
+#a = int(input("a = "))
+#b = int(input("b = "))
+#r = sum(a, b)
+#print(r)
+
+
+#proc1
+def a3(a):
+    return a*a*a
+
+#for i in range(5):
+#    r = randint(1, 10)
+#    print(r,"^3=", a3(r))
+
+
+#Proc2. Описать 2 функции PowerA2(А), PowerA4(A), вычисляющие вторую и четвертую степень числа A и возвращающие эти степени (параметры являются вещественными). С помощью этих функций найти вторую и четвертую степень пяти случайных чисел
+def a2(a):
+    return a*a
+
+def a4(a):
+    return a*a*a*a
+
+#for i in range(5):
+#    r = randint(1, 10)
+#    print(r,"^2=", a2(r))
+#    print(r,"^4=", a4(r))
+
+
+#Proc3. Описать 2 функции aMean(X, Y), gMean(X,Y), вычисляющие среднее арифметическое aMean = (X+Y)/2 и среднее геометрическое gMean = √ X·Y двух положительных чисел X и Y (X и Y — входные параметры вещественного типа). С помощью этих функций найти среднее арифметическое и среднее геометрическое для 10 пар случайных чисел.
+def aMean(a, b):
+    return (a+b)/2
+
+def gMean(a, b):
+    return math.sqrt(a*b)
+
+#for i in range(10):
+#    a = randint(1, 10)
+#    b = randint(1, 10)
+#    print(a, b, " среднее арифметическое = ", aMean(a, b))
+#    print(a, b, " среднее геометрическое = ", gMean(a, b))
+
+
+#Proc4. Описать 2 функции triangleP(a) и triangleS(a), вычисляющие по стороне a равностороннего треугольника его периметр P = 3·a и площадь a23/4 (параметры являются вещественными). С помощью этих функций найти периметры и площади трех равносторонних треугольников с данными сторонами (стороны ввести с клавиатуры).
+def triangleP(a):
+    return 3*a
+
+
+def triangleS(a):
+    return a*a*math.sqrt(3/4)
+
+#a = int(input("a = "))
+#print(a, " P = ", triangleP(a))
+#print(a, " S = ", triangleS(a))
+
+
+#Proc5. Описать 2 функции rectP(x1, y1, x2, y2) и rectS(x1, y1, x2, y2), вычисляющие периметр P и площадь S прямоугольника со сторонами, параллельными осям координат, по координатам (x1, y1), (x2, y2) его противоположных вершин. С помощью этих функций найти периметры и площади трех прямоугольников с данными противоположными вершинами.
+def rectP(x1, y1, x2, y2):
+    return 
+
+
+
+#Proc19. Описать функцию RingS(R1, R2) вещественного типа, находящую площадь кольца, заключенного между двумя окружностями с общим центром и радиусами R1 и R2 (R1 и R2 — вещественные, R1 > R2). С ее помощью найти площади трех колец, для которых даны внешние и внутренние ра- диусы. Воспользоваться формулой площади круга радиуса R: S = π·R2. В качестве значения π использовать 3.14.
+def RingS(R1, R2):
+    if R1>R2:
+        return 3.14*(R1*R1 - R2*R2)
+
+#k = int(input("k = "))
+#for i in range(k):
+#    R1 = int(input("R1 = "))
+#    R2 = int(input("R2 = "))
+#    print(R1,R2,"S = ",RingS(R1, R2) )
 
 
 
 
 
+#Proc20. Описать функцию TriangleP(a, h), находящую периметр равнобед- ренного треугольника по его основанию a и высоте h, проведенной к основанию (a и h — вещественные). С помощью этой функции найти периметры трех треугольников, для которых даны основания и высоты. Для нахождения боковой стороны b треугольника использовать теорему Пифагора:b2 = (a/2)2 + h2.
+def TriangleP(a, h):
+    b = math.sqrt((a/2)**2 + h*h)
+    P = a + b*2
+    return P
+
+#k = int(input("k = "))
+#for i in range(k):
+#    a = int(input("a = "))
+#    h = int(input("h = "))
+#    print(TriangleP(a, h))
+
+
+#Proc21◦. Описать функцию SumRange(A, B) целого типа, находящую сумму всех целых чисел от A до B включительно (A и B — целые). Если A > B,то функция возвращает 0. С помощью этой функции найти суммы чисел от A до B и от B до C, если даны числа A, B, C.
+def SumRange(a, b):
+    g = 0
+    while a<=b:
+        g=g+a
+        a=a+1
+    return g
+    if a>b:
+        print(0)
+
+
+#a = int(input("a = "))
+#b = int(input("b = "))
+#c = int(input("c = "))
+#print(SumRange(a, b))
+#print(SumRange(b, c))
+
+
+#Proc22. Описать функцию Calc(A, B, Op) вещественного типа, выполняющую над ненулевыми вещественными числами A и B одну из арифметических операций и возвращающую ее результат. Вид операции определяется це- лым параметром Op: 1 — вычитание, 2 — умножение, 3 — деление, осталь- ные значения — сложение. С помощью Calc выполнить для данных A и B операции, определяемые данными целыми N1, N2, N3
+def Calc(a, b, k):
+    if k == 1:
+        g = a-b
+    elif k == 2:
+        g = a*b
+    elif k == 3:
+        g = a/b
+    else:
+        g = a+b
+    return g
+    
+#a = int(input("a = "))
+#b = int(input("b = "))
+#k = int(input("k = "))
+#print(Calc(a, b, k))
+
+
+#Proc23. Описать функцию Quarter(x, y) целого типа, определяющую номер координатной четверти, в которой находится точка с ненулевыми веще- ственными координатами (x, y). С помощью этой функции найти номера координатных четвертей для трех точек с данными ненулевыми коорди- натами.
+def Quarter(x, y):
+    if x>0 and y>0:
+        g = 1
+    elif x>0 and y<0:
+        g = 4
+    elif x<0 and y>0:
+        g = 2
+    elif x<0 and y<0:
+        g = 3
+    return g
+
+#k = int(input("k = "))
+#for i in range(k):
+#    x = int(input("x = "))
+#    y = int(input("y = "))
+#    print(Quarter(x, y))
+
+
+#Proc24. Описать функцию Even(K) логического типа, возвращающую TRUE, если целый параметр K является четным, и FALSE в противном случае. С ее помощью найти количество четных чисел в наборе из 10 целых чисел.
+def Even(K):
+    res = K%2==0
+    return res
+
+#lst=[]
+#for i in range(15):
+#    lst.append(randint(-100,100))
+#for num in lst:
+#    if Even(num)==True:
+#        print(num)
+
+
+#Proc25◦. Описать функцию IsSquare(K) логического типа, возвращающую TRUE, если целый параметр K (>0) является квадратом некоторого це- лого числа, и FALSE в противном случае. С ее помощью найти количество квадратов в наборе из 10 целых положительных чисел.
+def IsSquare(K):
+    if K>0:
+        res = math.sqrt(K)%1==0
+        return res
+
+#k=0
+#lst=[]
+#for i in range(15):
+    #lst.append(randint(1,100))
+#for num in lst:
+#    if IsSquare(num)==True:
+#        k=k+1
+#        print(num)
+#print("k = ",k)
+
+
+#Proc26. Описать функцию IsPower5(K) логического типа, возвращающую TRUE, если целый параметр K (> 0) является степенью числа 5, и FALSE в противном случае. С ее помощью найти количество степеней числа 5 в наборе из 10 целых положительных чисел.
+##def IsPower5(K):
+##    h=1
+##    if K>0:
+##        while h<=K:
+##            h=h*5
+##        res = h==K
+##        return res
+##
+##x = int(input("x = "))
+##print(IsPower5(x))
+
+#g=0
+#lst=[]
+#for i in range(15):
+#    lst.append(randint(1,100))
+#for num in lst:
+#    if IsPower5(num)==True:
+#        print(num)
+#        g=g+1
+#print(g)
+
+
+
+##class MyClass:
+##    def __init__(self, name):
+##        self.name = name
+##
+##    def __str__(self):
+##        return f"Экземпляр класса MyClass с именем {self.name}"
+##
+##    def __del__(self):
+##        print(f"Экземпляр класса MyClass с именем {self.name} удален")
+##
+##    def __getattr__(self, item):
+##        return f"Метод/атрибут '{item}' не найден у экземпляра"
+##
+##    def __setattr__(self, name, value):
+##        print(f"устанавливаем значение {value} для атрибута (name)")
+##        super().__setattr__(name, value)
+##
+##
+### Создание объекта класса MyClass
+##obj = MyClass("example")
+##
+### Вывод информации об объекте при использовании str()
+##print(str(obj))
+##
+### Доступ к несуществующему атрибуту через __getattr__
+##print(obj.some_attribute)
+##
+### Изменение атрибута с использованием __setattr__
+##obj.new_attribute = 10
+##
+###Удаление объекта (вызовется_del_)
+##del obj
+
+
+
+
+
+
+
+##class Cafe:
+##    def __init__(self, cafe_name, cafe_type):
+##        self.cafe_name = cafe_name
+##        self.cafe_type = cafe_type
+##    
+##    def describe_cafe(self):
+##        print(f"Cafe name: {self.cafe_name}")
+##        print(f"Cafe type: {self.cafe_type}")
+##    
+##    def open_cafe(self):
+##        print("The cafe is now open.")
+##
+##    def buy_a_maid(self):
+##        print("Congratulations, you bought a maid, now you can...")
+##
+##    def pogladit(self):
+##        print("Vi ee pogladili, vam nravitsa:)")
+##
+### Создаем экземпляр класса Cafe
+##cafe = Cafe("My Cafe", "Neko made cafe")
+##
+### Выводим атрибуты по отдельности
+##print("Cafe name:", cafe.cafe_name)
+##print("Cafe type:", cafe.cafe_type)
+##
+### Вызываем методы
+##cafe.describe_cafe()
+##cafe.open_cafe()
+##g = int(input("Хотите купить neko горничную? Yes(1)/no(2)"))
+##if g == 1:
+##    cafe.buy_a_maid()
+##else:
+##    print("zra ti tak")
+##
+##z = int(input("hotite pogladit svou neko gornichnyu? Yes(1)/no(2)"))
+##if z == 1:
+##    cafe.pogladit()
+##else:
+##    print("zra ti tak")
+
+
+
+
+##class Vehicle:
+##    def __init__(self, make, model):
+##        self.make = make
+##        self.model = model
+##
+##    def display_info(self):
+##        print(f"Make: {self.make}")
+##        print(f"Model: {self.model}")
+##
+##
+##class Car(Vehicle):
+##    def __init__(self, make, model, num_wheels):
+##        super().__init__(make, model)
+##        self.num_wheels = num_wheels
+##
+##    def display_info(self):
+##        super().display_info()
+##        print(f"Number of wheels: {self.num_wheels}")
+##
+##
+##class Motorcycle(Vehicle):
+##    def __init__(self, make, model, num_wheels):
+##        super().__init__(make, model)
+##        self.num_wheels = num_wheels
+##
+##    def display_info(self):
+##        super().display_info()
+##        print(f"Number of wheels: {self.num_wheels}")
+##
+##
+### Создаем объекты Car и Motorcycle
+##car = Car("Mercedes", "Maybach", 4)
+##motorcycle = Motorcycle("Ducati", "SuperleggeraV4", 2)
+##
+### Вызываем метод display_info для каждого объекта
+##print("Car:")
+##car.display_info()
+##print("\nMotorcycle:")
+##motorcycle.display_info()
+
+
+
+
+
+##Name = "Dungeon master"
+##
+##def say1():
+##    print(" give me 300 bucks, ",Name)
+##
+##def say2():
+##    print(" Ara-Ara ", Name)
+##
+##
+##say1()
+##say2()
+##print(Name)
+
+
+
+
+##Name = "Dungeon master"
+##
+##def say3():
+##    Name = "Boy next door"
+##    Name2 = "(Fedor)"
+##    print("UwU ", Name,Name2)
+##    
+##
+##def say4():
+##    Name = "Girl next door"
+##    Name2 = "(Kirill)"
+##    print("UwU ", Name,Name2)
+##
+##
+##say3()
+##say4()
+##print(Name)
+
+
+
+##Name = "Dungeon master"
+##
+##def say5():
+##    global Name
+##    Name = "Boy next door"
+##    Name2 = "(Fedor)"
+##    print("UwU ", Name,Name2)
+##    
+##
+##def say6():
+##    Name = "Girl next door"
+##    Name2 = "(Kirill)"
+##    print("UwU ", Name,Name2)
+##
+##
+##say5()
+##say6()
+##print(Name)
+
+
+
+##def outer():
+##    n = 5
+##    def inner():
+##        nonlocal n
+##        n = 25
+##        print(n)
+##    inner()
+##    print(n)
+##outer()
+
+
+
+##class A:
+##    def __init__(self,name)->None:
+##        self._name = name
+##    def _private(self):
+##        print("Eto private metod!")
+##a = A("卍卍卍")
+##print(a._name)
+###print(a._A_name)
+##a._name = 666
+##print(a._name)
+
+
+
+
+##class Natiz:
+##    def __init__(self,name,rank):
+##        self.name = name
+##        self.rank = rank
+##
+##    def info(self):
+##        print(f"I am Hitler. My name is {self.name}. I am {self.rank}.")
+##
+##    def make_sound(self):
+##        print("卍卍卍卍卍卍卍卍卍")
+##
+##
+##class USSR:
+##    def fight(self):
+##        print("you fisted the Nazis")
+##
+##    def __init__(self,name,rank):
+##        self.name = name
+##        self.rank = rank
+##
+##
+##Natiz1 = Natiz("Adolf", "Dungeon master")
+##USSR1 = USSR("Iosif", "Ara-Ara")
+##
+##Natiz1.info()
+##Natiz1.make_sound()
+
+
+
+##name = "debil"
+##
+##def sayHi():
+##    name = "Kirill"
+##    print(name)
+##
+##def sayBye():
+##    print("is", name)
+##    global hitler
+##    hitler = "卍"
+##
+##sayHi()
+##sayBye()
+
+
+
+
+
+class Cafe:
+    def __init__(self, cafe_name, cafe_type):
+        self.cafe_name = cafe_name
+        self.cafe_type = cafe_type
+    
+    def describe_cafe(self):
+        print(f"Cafe name: {self.cafe_name}")
+        print(f"Cafe type: {self.cafe_type}")
+    
+    def open_cafe(self):
+        print("The cafe is now open.")
+
+    def buy_a_maid(self):
+        print("Congratulations, you bought a maid, now you can...")
+
+    def pogladit(self):
+        print("Vi ee pogladili, vam nravitsa:)")
+
+    def natiz(self):
+        print("卍卍卍")
+
+# Создаем экземпляр класса Cafe
+cafe = Cafe("My Cafe", "Neko made cafe")
+
+# Выводим атрибуты по отдельности
+print("Cafe name:", cafe.cafe_name)
+print("Cafe type:", cafe.cafe_type)
+
+# Вызываем методы
+cafe.describe_cafe()
+cafe.open_cafe()
+
+
+h = int(input("Are you Natiz? Yes(1)/no(2)"))
+if h == 1:
+    cafe.natiz()
+    g = int(input("Хотите купить neko горничную? Yes(1)/no(2)"))
+    if g == 1:
+        cafe.buy_a_maid()
+        z = int(input("hotite pogladit svou neko gornichnyu? Yes(1)/no(2)"))
+        if z == 1:
+           cafe.pogladit()
+        else:
+            print("zra ti tak")
+    else:
+        print("zra ti tak")
+else:
+    print("zra ti tak")
 
 
 
