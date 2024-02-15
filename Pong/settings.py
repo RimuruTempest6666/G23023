@@ -1,0 +1,13 @@
+FPS = 60
+SC_WIDTH = 800
+SC_HEIGHT = 600
+
+P_WIDTH = 20
+P_HEIGHT = 100
+P_SPEEDY = 5
+P_OFFSET = 10
+
+BLACK = (0,0,0)
+WHITE = (255,255,255)
+DarkCyan = (0, 139, 139)
+DeepSkyBlue =(0, 191, 255)
