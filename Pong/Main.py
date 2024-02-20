@@ -4,15 +4,14 @@ from settings import *
 from ball import Ball
 from Paddle import Paddle
 
-# здесь происходит инициация,
 # создание объектов
 pygame.init()
 screen = pygame.display.set_mode((SC_WIDTH, SC_HEIGHT))
 clock = pygame.time.Clock()
 
 ball = Ball(SC_WIDTH//2, SC_HEIGHT//2, 10, WHITE, screen)
-
-left_paddle = Paddle(P_OFFSET, SC_HEIGHT//2 - P_HEIGHT, DeepSkyBlue, screen)
+left_paddle = Paddle(P_OFFSET, SC_HEIGHT//2 - P_HEIGHT//2, WHITE, screen, pygame.K_w, pygame.K_s)
+right_paddle = Paddle(SC_WIDTH - P_OFFSET - P_WIDTH, SC_HEIGHT//2 - P_HEIGHT//2, WHITE, screen, pygame.K_UP, pygame.K_DOWN)
 
 # главный цикл
 while True:
@@ -29,9 +28,45 @@ while True:
     # --------
     ball.update()
     left_paddle.update()
+    right_paddle.update()
+
+
+    #пересечение объектов (collisions)
+    #левая рокетка
+    #нижняя точка мяча и верхний край рокетки
+    if ball.get_mid_bottom_x() >= left_paddle.get_x():
+        if ball.get_mid_bottom_x() <= left_paddle.get_x() + P_WIDTH:
+            if ball.get_mid_bottom_y() >= left_paddle.get_y():
+                ball.reverse_speedY()
+        
+    
     
     # обновление экрана
     screen.fill(BLACK)
     ball.draw()
     left_paddle.draw()
+    right_paddle.draw()
     pygame.display.update()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
