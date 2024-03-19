@@ -107,6 +107,22 @@ class Text_obj:
 
 
 
+#background
+class Background:
+
+    def __init__(self, filename):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(filename).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
+
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+
+
 
 
 
@@ -115,22 +131,22 @@ pygame.init()
 screen = pygame.display.set_mode((SC_WIDTH, SC_HEIGHT))
 clock = pygame.time.Clock()
 player = Player(SC_WIDTH / 2, SC_HEIGHT - PLAYER_H, "Neko.png" , pygame.K_RIGHT, pygame.K_LEFT)
-
-
+game_over_bg = Background("fon.jpg")
+start_bg = Background("vhod.jpeg")
 
 #groups
-all_sprites = pygame.sprite.Group
-items = pygame.sprite.Group
+all_sprites = pygame.sprite.Group()
+items = pygame.sprite.Group()
 
 all_sprites.add(player)
 
-for i in range(5):
+for i in range(3):
     chocolate = Havchik("chocolate.png", True)
     all_sprites.add(chocolate)
     items.add(chocolate)
-for i in range(5):
+for i in range(3):
     cactus = Havchik("cactus.png", False)
-    all_sprites.add(chocolate)
+    all_sprites.add(cactus)
     items.add(cactus)
 
 
@@ -138,10 +154,28 @@ for i in range(5):
 score = 0
 hp = 100
 text_score = Text_obj(10, 10, str(score), screen)
-text_hp = Text_obj(10, 50, str(hp), screen)
+text_hp = Text_obj(SC_WIDTH - 80, 10, str(hp), screen)
+
+
+while True:
+    for i in pygame.event.get():
+        if i.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
+        break
+
+    screen.fill(BLACK)
+    start_bg.draw(screen)
+    pygame.display.update()
+
+        
+run = True
 
 # главный цикл
-while True:
+while run:
     # задержка
     clock.tick(FPS)
     # цикл обработки событий
@@ -155,6 +189,12 @@ while True:
 
     text_score.update(score)
     text_hp.update(hp)
+    if hp <= 0:
+        run = False
+
+    
+    
+       
 
 
     #collisions
@@ -169,7 +209,7 @@ while True:
         elif hit.get_edible() == False:
             hp -= 20
             cactus = Havchik("cactus.png", False)
-            all_sprites.add(chocolate)
+            all_sprites.add(cactus)
             items.add(cactus)
 
 
@@ -185,8 +225,15 @@ while True:
     pygame.display.update()
 
 
+while True:
+    for i in pygame.event.get():
+        if i.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
 
-
+        screen.fill(BLACK)
+        game_over_bg.draw(screen)
+        pygame.display.update()
 
 
 
