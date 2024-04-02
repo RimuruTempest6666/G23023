@@ -5,4 +5,8 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 PLAYER_FILE_NAME = "player.png"
+PLAYER_MAX_HP = 100
 
+LASER_FILE_NAME = "laser.png"
+
+LASER_SPD = 10

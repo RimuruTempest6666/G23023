@@ -4,6 +4,8 @@ from settings import *
 from player import Player
 from meteor import Meteor
 from meteor_manager import MeteorManager
+from text_obj import Text_obj
+from player import Laser
 
 class Game:
     def __init__(self):
@@ -13,6 +15,11 @@ class Game:
         self.run = True
         self.player = Player()
         self.meteor_manager = MeteorManager()
+        self.hp = PLAYER_MAX_HP
+        self.text_hp = Text_obj(SC_WIDTH - 100, 10, str(self.hp))
+        self.laser = Laser(self.player.get_centerx(), self.player.get_top())
+        
+
         
     def play(self):
         while self.run:
@@ -31,13 +38,21 @@ class Game:
     def update(self):
         self.player.update()
         self.meteor_manager.update()
+        self.text_hp.update(self.player.get_hp())
+        self.laser.update()
 
     def check_collisions(self):
-        pass
+        for mateor in self.meteor_manager.meteors:
+            if self.player.rect.colliderect(self.meteor.rect):
+               self.player.reduce_hp(meteor.get_damage())
+               meteor.random_position()
+
 
     def draw(self):
         self.screen.fill(BLACK)
         self.player.draw(self.screen)
         self.meteor_manager.draw(self.screen)
+        self.text_hp.draw(self.screen)
+        self.laser.draw(self.screen)
         pygame.display.update()
 
