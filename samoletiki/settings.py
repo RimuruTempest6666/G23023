@@ -10,3 +10,9 @@ PLAYER_MAX_HP = 100
 LASER_FILE_NAME = "laser.png"
 
 LASER_SPD = 10
+
+GAME_OVER_FILENAME = "game_over.png"
+
+FIRE_DELAY = 200
+LASER_SPEEDY = 10
+

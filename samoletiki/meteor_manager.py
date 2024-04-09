@@ -35,6 +35,8 @@ class MeteorManager:
         for meteor in self.meteors:
             meteor.draw(screen)
                 
+                
+                
 
 
 
