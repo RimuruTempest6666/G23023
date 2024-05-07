@@ -1,0 +1,90 @@
+import pygame
+import random
+
+# Инициализация Pygame
+pygame.init()
+
+# Задаем размеры окна
+WINDOW_WIDTH = 640
+WINDOW_HEIGHT = 480
+
+# Задаем цвет черного фона
+BLACK = (0, 0, 0)
+
+# Создаем окно
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+# Устанавливаем заголовок окна
+pygame.display.set_caption('Pacman')
+
+# Задаем частоту кадров в секунду
+FPS = 60
+clock = pygame.time.Clock()
+
+# Задаем размер и скорость Пакмана
+pacman_size = 20
+pacman_speed = 5
+
+# Задаем координаты Пакмана
+pacman_x = WINDOW_WIDTH // 2
+pacman_y = WINDOW_HEIGHT // 2
+
+# Задаем список точек
+dots = []
+
+# Генерируем случайные точки на поле
+for i in range(20):
+    x = random.randint(0, WINDOW_WIDTH - pacman_size)
+    y = random.randint(0, WINDOW_HEIGHT - pacman_size)
+    dots.append((x, y))
+
+# Функция для отрисовки Пакмана
+def draw_pacman(x, y):
+    pygame.draw.circle(screen, (255, 255, 0), (x, y), pacman_size // 2)
+
+# Функция для отрисовки точек
+def draw_dots(dots):
+    for dot in dots:
+        pygame.draw.circle(screen, (255, 0, 0), dot, 5)
+
+# Основной цикл игры
+running = True
+while running:
+    # Обрабатываем события
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Получаем состояние клавиатуры
+    keys = pygame.key.get_pressed()
+
+    # Управляем Пакманом
+    if keys[pygame.K_LEFT]:
+        pacman_x -= pacman_speed
+    if keys[pygame.K_RIGHT]:
+        pacman_x += pacman_speed
+    if keys[pygame.K_UP]:
+        pacman_y -= pacman_speed
+    if keys[pygame.K_DOWN]:
+        pacman_y += pacman_speed
+
+    # Проверяем столкновение с точками
+    for dot in dots:
+        if abs(pacman_x - dot[0]) < pacman_size // 2 and abs(pacman_y - dot[1]) < pacman_size // 2:
+            dots.remove(dot)
+
+    # Очистка экрана
+    screen.fill(BLACK)
+
+    # Отрисовка Пакмана и точек
+    draw_pacman(pacman_x, pacman_y)
+    draw_dots(dots)
+
+    # Обновляем экран
+    pygame.display.update()
+
+    # Задаем частоту кадров
+    clock.tick(FPS)
+
+# Завершение Pygame
+pygame.quit()
