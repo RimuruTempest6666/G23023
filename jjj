@@ -1,149 +1,270 @@
 import pygame
 import random
+import time
 
-# Инициализация Pygame
 pygame.init()
 
-# Настройки окна игры
-WINDOW_WIDTH = 640
-WINDOW_HEIGHT = 480
-TILE_SIZE = 32
+# Параметры экрана
+WIDTH, HEIGHT = 600, 650
+GRID_SIZE = 20
+SCOREBOARD_HEIGHT = 50
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT + SCOREBOARD_HEIGHT))
+pygame.display.set_caption('Pac-Man')
 
 # Цвета
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
-RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+PINK = (255, 192, 203)
+CYAN = (0, 255, 255)
+ORANGE = (255, 165, 0)
 
-# Создаем окно
-screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption('Pacman')
-
-# Частота кадров
-FPS = 60
+# Таймер
 clock = pygame.time.Clock()
 
-# Счетчик очков
-score = 0
+# Шрифт для отображения счета
+font = pygame.font.Font(None, 36)
 
-# Карта игры в виде списка строк
-level_map = [
-    "####################",
-    "#..................#",
-    "#.###.###.###.###.#.#",
-    "#..................#",
-    "#.#.#.#.#.#.#.#.#.#.#",
-    "#..................#",
-    "####################"
+# Лабиринт
+maze = [
+    "############################",
+    "#............##............#",
+    "#.####.#####.##.#####.####.#",
+    "#o####.#####.##.#####.####o#",
+    "#.####.#####.##.#####.####.#",
+    "#..........................#",
+    "#.####.##.########.##.####.#",
+    "#.####.##.########.##.####.#",
+    "#......##....##....##......#",
+    "######.##### ## #####.######",
+    "######.##### ## #####.######",
+    "######.##          ##.######",
+    "######.## ######## ##.######",
+    "######.## ######## ##.######",
+    "           ########           ",
+    "######.## ######## ##.######",
+    "######.## ######## ##.######",
+    "######.##          ##.######",
+    "######.## ######## ##.######",
+    "######.## ######## ##.######",
+    "#............##............#",
+    "#.####.#####.##.#####.####.#",
+    "#.####.#####.##.#####.####.#",
+    "#o..##................##..o#",
+    "###.##.##.########.##.##.###",
+    "###.##.##.########.##.##.###",
+    "#......##....##....##......#",
+    "#.##########.##.##########.#",
+    "#.##########.##.##########.#",
+    "#..........................#",
+    "############################"
 ]
 
-# Начальное положение Пакмана
-pacman_x, pacman_y = 1, 1
+# Позиция начальная Pac-Man
+pacman_start_pos = [14, 23]
+pacman_pos = pacman_start_pos[:]
+pacman_direction = (0, 0)
 
-# Начальное положение призраков
-ghosts = [(5, 5), (6, 5), (5, 6)]
+# Позиции начальные призраков
+ghosts_start_pos = {
+    "blinky": {"pos": [14, 11], "color": RED, "scatter_target": (27, 0)},
+    "pinky": {"pos": [13, 11], "color": PINK, "scatter_target": (0, 0)},
+    "inky": {"pos": [15, 11], "color": CYAN, "scatter_target": (27, 30)},
+    "clyde": {"pos": [16, 11], "color": ORANGE, "scatter_target": (0, 30)},
+}
 
-# Функция для отрисовки Пакмана
-def draw_pacman(x, y):
-    screen.blit(pacman_img, (x * TILE_SIZE, y * TILE_SIZE))
+ghosts = ghosts_start_pos.copy()
+for key in ghosts:
+    ghosts[key]["direction"] = (0, 1)
 
-# Функция для отрисовки призраков
-def draw_ghosts(ghosts):
-    for ghost in ghosts:
-        screen.blit(ghost_img, (ghost[0] * TILE_SIZE, ghost[1] * TILE_SIZE))
+ghost_modes = ["scatter", "chase", "frightened"]
+current_ghost_mode = "scatter"
+mode_timer = 0
 
-# Функция для отрисовки карты
-def draw_map():
-    for y in range(len(level_map)):
-        for x in range(len(level_map[y])):
-            if level_map[y][x] == '#':
-                screen.blit(wall_img, (x * TILE_SIZE, y * TILE_SIZE))
-            elif level_map[y][x] == '.':
-                pygame.draw.circle(screen, YELLOW, (x * TILE_SIZE + TILE_SIZE // 2, y * TILE_SIZE + TILE_SIZE // 2), 3)
+score = 0
+lives = 3
 
-# Функция для перемещения Пакмана
-def move_pacman(dx, dy):
-    global pacman_x, pacman_y, score
-    new_x = pacman_x + dx
-    new_y = pacman_y + dy
-    # Проверяем, можно ли переместиться на новую позицию
-    if level_map[new_y][new_x] != '#':
-        pacman_x = new_x
-        pacman_y = new_y
-        # Проверяем, есть ли точка на новой позиции
-        if level_map[pacman_y][pacman_x] == '.':
-            score += 10
-            level_map[pacman_y][pacman_x] = ' '
+pellet_image = pygame.Surface((GRID_SIZE // 2, GRID_SIZE // 2))
+pellet_image.fill(WHITE)
+power_pellet_image = pygame.Surface((GRID_SIZE, GRID_SIZE))
+power_pellet_image.fill(WHITE)
 
-# Функция для перемещения призраков
+pacman_images = [pygame.image.load(f'pacman_{i}.png') for i in range(1, 5)]
+pacman_image_index = 0
+pacman_animation_timer = 0
+
+ghost_images = {
+    "blinky": pygame.image.load('blinky.png'),
+    "pinky": pygame.image.load('pinky.png'),
+    "inky": pygame.image.load('inky.png'),
+    "clyde": pygame.image.load('clyde.png'),
+    "frightened": pygame.image.load('frightened_ghost.png')
+}
+
+fruit_images = [pygame.image.load(f'fruit_{i}.png') for i in range(1, 8)]
+current_fruit = fruit_images[0]
+fruit_pos = (14, 17)
+fruit_spawned = False
+fruit_timer = 0
+
+def draw_maze():
+    for y, row in enumerate(maze):
+        for x, char in enumerate(row):
+            if char == "#":
+                pygame.draw.rect(screen, BLUE, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE))
+            elif char == ".":
+                screen.blit(pellet_image, (x * GRID_SIZE + GRID_SIZE // 4, y * GRID_SIZE + GRID_SIZE // 4))
+            elif char == "o":
+                screen.blit(power_pellet_image, (x * GRID_SIZE, y * GRID_SIZE))
+
+def draw_score():
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    screen.blit(score_text, (20, HEIGHT + 10))
+
+    lives_text = font.render(f"Lives: {lives}", True, WHITE)
+    screen.blit(lives_text, (WIDTH - 120, HEIGHT + 10))
+
+def check_collision(pos1, pos2):
+    return pos1[0] == pos2[0] and pos1[1] == pos2[1]
+
+def get_valid_directions(pos):
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    valid_directions = []
+    for direction in directions:
+        new_x = pos[0] + direction[0]
+        new_y = pos[1] + direction[1]
+        if maze[new_y][new_x] != "#":
+            valid_directions.append(direction)
+    return valid_directions
+
 def move_ghosts():
     global ghosts
-    for i in range(len(ghosts)):
-        # Случайное направление для перемещения призрака
-        direction = random.choice([(0, 1), (0, -1), (1, 0), (-1, 0)])
-        new_x = ghosts[i][0] + direction[0]
-        new_y = ghosts[i][1] + direction[1]
-        # Проверяем, можно ли переместиться на новую позицию
-        if level_map[new_y][new_x] != '#':
-            ghosts[i] = (new_x, new_y)
+    for key, ghost in ghosts.items():
+        if current_ghost_mode == "scatter":
+            target = ghost["scatter_target"]
+        elif current_ghost_mode == "chase":
+            if key == "blinky":
+                target = pacman_pos
+            elif key == "pinky":
+                target = [pacman_pos[0] + pacman_direction[0] * 4, pacman_pos[1] + pacman_direction[1] * 4]
+            elif key == "inky":
+                target = [pacman_pos[0] + pacman_direction[0] * 2, pacman_pos[1] + pacman_direction[1] * 2]
+            elif key == "clyde":
+                target = pacman_pos if ((pacman_pos[0] - ghost["pos"][0]) ** 2 + (pacman_pos[1] - ghost["pos"][1]) ** 2) ** 0.5 > 8 else ghost["scatter_target"]
+        elif current_ghost_mode == "frightened":
+            target = [random.randint(0, 27), random.randint(0, 30)]
 
-# Функция для проверки столкновения между Пакманом и призраками
-def check_collision():
-    global running
-    for ghost in ghosts:
-        if pacman_x == ghost[0] and pacman_y == ghost[1]:
-            running = False  # Конец игры
+        directions = get_valid_directions(ghost["pos"])
+        best_direction = ghost["direction"]
+        min_distance = float("inf")
 
-# Загрузка изображений
-pacman_img = pygame.image.load('pacman.png')
-ghost_img = pygame.image.load('ghost.png')
-wall_img = pygame.image.load('wall.png')
+        for direction in directions:
+            new_x = ghost["pos"][0] + direction[0]
+            new_y = ghost["pos"][1] + direction[1]
+            if maze[new_y][new_x] != "#":
+                distance = ((target[0] - new_x) ** 2 + (target[1] - new_y) ** 2) ** 0.5
+                if distance < min_distance:
+                    min_distance = distance
+                    best_direction = direction
 
-# Основной цикл игры
+        ghost["direction"] = best_direction
+        ghost["pos"][0] += ghost["direction"][0]
+        ghost["pos"][1] += ghost["direction"][1]
+
+def draw_pacman():
+    global pacman_image_index, pacman_animation_timer
+    pacman_animation_timer += 1
+    if pacman_animation_timer >= 5:
+        pacman_image_index = (pacman_image_index + 1) % len(pacman_images)
+        pacman_animation_timer = 0
+    screen.blit(pacman_images[pacman_image_index], (pacman_pos[0] * GRID_SIZE, pacman_pos[1] * GRID_SIZE))
+
+def draw_ghosts():
+    for key, ghost in ghosts.items():
+        if current_ghost_mode == "frightened":
+            screen.blit(ghost_images["frightened"], (ghost["pos"][0] * GRID_SIZE, ghost["pos"][1] * GRID_SIZE))
+        else:
+            screen.blit(ghost_images[key], (ghost["pos"][0] * GRID_SIZE, ghost["pos"][1] * GRID_SIZE))
+
 running = True
 while running:
-    # Обрабатываем события
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                pacman_direction = (-1, 0)
+            elif event.key == pygame.K_RIGHT:
+                pacman_direction = (1, 0)
+            elif event.key == pygame.K_UP:
+                pacman_direction = (0, -1)
+            elif event.key == pygame.K_DOWN:
+                pacman_direction = (0, 1)
 
-    # Получаем состояние клавиатуры
-    keys = pygame.key.get_pressed()
+    new_x = pacman_pos[0] + pacman_direction[0]
+    new_y = pacman_pos[1] + pacman_direction[1]
+    if maze[new_y][new_x] != "#":
+        pacman_pos[0] = new_x
+        pacman_pos[1] = new_y
 
-    # Управляем Пакманом
-    if keys[pygame.K_LEFT]:
-        move_pacman(-1, 0)
-    if keys[pygame.K_RIGHT]:
-        move_pacman(1, 0)
-    if keys[pygame.K_UP]:
-        move_pacman(0, -1)
-    if keys[pygame.K_DOWN]:
-        move_pacman(0, 1)
+    if maze[pacman_pos[1]][pacman_pos[0]] == ".":
+        maze[pacman_pos[1]] = maze[pacman_pos[1]][:pacman_pos[0]] + " " + maze[pacman_pos[1]][pacman_pos[0] + 1:]
+        score += 10
+    elif maze[pacman_pos[1]][pacman_pos[0]] == "o":
+        maze[pacman_pos[1]] = maze[pacman_pos[1]][:pacman_pos[0]] + " " + maze[pacman_pos[1]][pacman_pos[0] + 1:]
+        score += 50
+        current_ghost_mode = "frightened"
+        mode_timer = 0
 
-    # Перемещение призраков
+    if check_collision(pacman_pos, fruit_pos):
+        score += random.randint(100, 5000)
+        fruit_spawned = False
+
+    for key, ghost in ghosts.items():
+        if check_collision(pacman_pos, ghost["pos"]):
+            if current_ghost_mode == "frightened":
+                ghost["pos"] = ghosts_start_pos[key]["pos"][:]
+                score += 200
+            else:
+                lives -= 1
+                pacman_pos = pacman_start_pos[:]
+                if lives == 0:
+                    running = False
+
+    mode_timer += 1
+    if current_ghost_mode == "frightened" and mode_timer > 40:
+        current_ghost_mode = "scatter"
+        mode_timer = 0
+    elif mode_timer > 200:
+        current_ghost_mode = "chase" if current_ghost_mode == "scatter" else "scatter"
+        mode_timer = 0
+
     move_ghosts()
 
-    # Проверка на столкновение с призраками
-    check_collision()
-
-    # Очистка экрана
     screen.fill(BLACK)
+    draw_maze()
+    draw_pacman()
+    draw_ghosts()
 
-    # Отрисовка карты, Пакмана и призраков
-    draw_map()
-    draw_pacman(pacman_x, pacman_y)
-    draw_ghosts(ghosts)
+    if fruit_spawned:
+        screen.blit(current_fruit, (fruit_pos[0] * GRID_SIZE, fruit_pos[1] * GRID_SIZE))
+    else:
+        if random.randint(0, 1000) < 10:
+            fruit_spawned = True
+            fruit_timer = 0
+            current_fruit = random.choice(fruit_images)
+            fruit_pos = [random.randint(0, 27), random.randint(0, 30)]
 
-    # Отображение счета
-    font = pygame.font.Font(None, 36)
-    score_text = font.render(f'Score: {score}', True, YELLOW)
-    screen.blit(score_text, (10, 10))
+    if fruit_spawned:
+        fruit_timer += 1
+        if fruit_timer > 300:
+            fruit_spawned = False
 
-    # Обновление экрана
-    pygame.display.update()
+    draw_score()
+    pygame.display.flip()
+    clock.tick(10)
 
-    # Частота кадров
-    clock.tick(FPS)
-
-# Завершение Pygame
 pygame.quit()
