@@ -1,0 +1,277 @@
+import pygame
+import random
+import time
+
+pygame.init()
+
+# Параметры экрана
+WIDTH, HEIGHT = 600, 650
+GRID_SIZE = 20
+SCOREBOARD_HEIGHT = 50
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT + SCOREBOARD_HEIGHT))
+pygame.display.set_caption('Pac-Man')
+
+# Цвета
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+YELLOW = (255, 255, 0)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+PINK = (255, 192, 203)
+CYAN = (0, 255, 255)
+ORANGE = (255, 165, 0)
+
+# Таймер
+clock = pygame.time.Clock()
+
+# Шрифт для отображения счета
+font = pygame.font.Font(None, 36)
+
+# Лабиринт
+maze = [
+    "############################",
+    "#............##............#",
+    "#.####.#####.##.#####.####.#",
+    "#o####.#####.##.#####.####o#",
+    "#.####.#####.##.#####.####.#",
+    "#..........................#",
+    "#.####.##.########.##.####.#",
+    "#.####.##.########.##.####.#",
+    "#......##....##....##......#",
+    "######.##### ## #####.######",
+    "######.##### ## #####.######",
+    "######.##          ##.######",
+    "######.## ######## ##.######",
+    "######.## ######## ##.######",
+    "          ########          ",
+    "######.## ######## ##.######",
+    "######.## ######## ##.######",
+    "######.##          ##.######",
+    "######.## ######## ##.######",
+    "######.## ######## ##.######",
+    "#............##............#",
+    "#.####.#####.##.#####.####.#",
+    "#.####.#####.##.#####.####.#",
+    "#o..##................##..o#",
+    "###.##.##.########.##.##.###",
+    "###.##.##.########.##.##.###",
+    "#......##....##....##......#",
+    "#.##########.##.##########.#",
+    "#.##########.##.##########.#",
+    "#..........................#",
+    "############################"
+]
+
+# Позиция начальная Pac-Man
+pacman_start_pos = [14, 23]
+pacman_pos = pacman_start_pos[:]
+pacman_direction = (0, 0)
+
+# Позиции начальные призраков
+ghosts_start_pos = {
+    "blinky": {"pos": [14, 11], "color": RED, "scatter_target": (27, 0)},
+    "pinky": {"pos": [13, 11], "color": PINK, "scatter_target": (0, 0)},
+    "inky": {"pos": [15, 11], "color": CYAN, "scatter_target": (27, 30)},
+    "clyde": {"pos": [16, 11], "color": ORANGE, "scatter_target": (0, 30)},
+}
+
+ghosts = ghosts_start_pos.copy()
+for key in ghosts:
+    ghosts[key]["direction"] = (0, 1)
+
+ghost_modes = ["scatter", "chase", "frightened"]
+current_ghost_mode = "scatter"
+mode_timer = 0
+
+score = 0
+lives = 3
+
+pellet_image = pygame.Surface((GRID_SIZE // 2, GRID_SIZE // 2))
+pellet_image.fill(WHITE)
+power_pellet_image = pygame.Surface((GRID_SIZE, GRID_SIZE))
+power_pellet_image.fill(WHITE)
+
+pacman_images = [pygame.image.load(f'pacman_{i}.png') for i in range(1, 3)]
+pacman_image_index = 0
+pacman_animation_timer = 0
+
+
+ghost_images = {
+    "blinky": pygame.image.load('blinky.png'),
+    "pinky": pygame.image.load('pinky.png'),
+    "inky": pygame.image.load('inky.png'),
+    "clyde": pygame.image.load('clyde.png'),
+    "frightened": pygame.image.load('frightened_ghost.png')
+}
+
+fruit_images = [pygame.image.load(f'fruit_{i}.png') for i in range(1, 2)]
+current_fruit = fruit_images[0]
+fruit_pos = (14, 17)
+fruit_spawned = False
+fruit_timer = 0
+
+def draw_maze():
+    for y, row in enumerate(maze):
+        for x, char in enumerate(row):
+            if char == "#":
+                pygame.draw.rect(screen, BLUE, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE))
+            elif char == ".":
+                screen.blit(pellet_image, (x * GRID_SIZE + GRID_SIZE // 4, y * GRID_SIZE + GRID_SIZE // 4))
+            elif char == "o":
+                screen.blit(power_pellet_image, (x * GRID_SIZE, y * GRID_SIZE))
+
+def draw_score():
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    screen.blit(score_text, (20, HEIGHT + 10))
+
+    lives_text = font.render(f"Lives: {lives}", True, WHITE)
+    screen.blit(lives_text, (WIDTH - 120, HEIGHT + 10))
+
+def check_collision(pos1, pos2):
+    return pos1[0] == pos2[0] and pos1[1] == pos2[1]
+
+def get_valid_directions(pos):
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    valid_directions = []
+    for direction in directions:
+        new_x = pos[0] + direction[0]
+        new_y = pos[1] + direction[1]
+        if maze[new_y][new_x] != "#":
+            valid_directions.append(direction)
+    return valid_directions
+
+def move_ghosts():
+    global ghosts
+    for key, ghost in ghosts.items():
+        if current_ghost_mode == "scatter":
+            target = ghost["scatter_target"]
+        elif current_ghost_mode == "chase":
+            if key == "blinky":
+                target = pacman_pos
+            elif key == "pinky":
+                target = [pacman_pos[0] + pacman_direction[0] * 4, pacman_pos[1] + pacman_direction[1] * 4]
+            elif key == "inky":
+                target = [pacman_pos[0] + pacman_direction[0] * 2, pacman_pos[1] + pacman_direction[1] * 2]
+            elif key == "clyde":
+                target = pacman_pos if ((pacman_pos[0] - ghost["pos"][0]) ** 2 + (pacman_pos[1] - ghost["pos"][1]) ** 2) ** 0.5 > 8 else ghost["scatter_target"]
+        elif current_ghost_mode == "frightened":
+            target = [random.randint(0, 27), random.randint(0, 30)]
+
+        directions = get_valid_directions(ghost["pos"])
+        best_direction = ghost["direction"]
+        min_distance = float("inf")
+
+        for direction in directions:
+            new_x = ghost["pos"][0] + direction[0]
+            new_y = ghost["pos"][1] + direction[1]
+            if maze[new_y][new_x] != "#":
+                distance = ((target[0] - new_x) ** 2 + (target[1] - new_y) ** 2) ** 0.5
+                if distance < min_distance:
+                    min_distance = distance
+                    best_direction = direction
+
+        ghost["direction"] = best_direction
+        ghost["pos"][0] += ghost["direction"][0]
+        ghost["pos"][1] += ghost["direction"][1]
+
+def draw_pacman():
+    global pacman_image_index, pacman_animation_timer
+    pacman_animation_timer += 1
+    if pacman_animation_timer >= 5:
+        pacman_image_index = (pacman_image_index + 1) % len(pacman_images)
+        pacman_animation_timer = 0
+    screen.blit(pacman_images[pacman_image_index], (pacman_pos[0] * GRID_SIZE, pacman_pos[1] * GRID_SIZE))
+
+
+    if pacman.rect.x <= 0:
+            pacman.rect.x = WIDTH
+    if pacman.rect.right >= WIDTH:
+            pacman.rect.right = 0
+
+def draw_ghosts():
+    for key, ghost in ghosts.items():
+        if current_ghost_mode == "frightened":
+            screen.blit(ghost_images["frightened"], (ghost["pos"][0] * GRID_SIZE, ghost["pos"][1] * GRID_SIZE))
+        else:
+            screen.blit(ghost_images[key], (ghost["pos"][0] * GRID_SIZE, ghost["pos"][1] * GRID_SIZE))
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                pacman_direction = (-1, 0)
+            elif event.key == pygame.K_RIGHT:
+                pacman_direction = (1, 0)
+            elif event.key == pygame.K_UP:
+                pacman_direction = (0, -1)
+            elif event.key == pygame.K_DOWN:
+                pacman_direction = (0, 1)
+
+    new_x = pacman_pos[0] + pacman_direction[0]
+    new_y = pacman_pos[1] + pacman_direction[1]
+    if maze[new_y][new_x] != "#":
+        pacman_pos[0] = new_x
+        pacman_pos[1] = new_y
+
+    if maze[pacman_pos[1]][pacman_pos[0]] == ".":
+        maze[pacman_pos[1]] = maze[pacman_pos[1]][:pacman_pos[0]] + " " + maze[pacman_pos[1]][pacman_pos[0] + 1:]
+        score += 10
+    elif maze[pacman_pos[1]][pacman_pos[0]] == "o":
+        maze[pacman_pos[1]] = maze[pacman_pos[1]][:pacman_pos[0]] + " " + maze[pacman_pos[1]][pacman_pos[0] + 1:]
+        score += 50
+        current_ghost_mode = "frightened"
+        mode_timer = 0
+
+    if check_collision(pacman_pos, fruit_pos):
+        score += random.randint(100, 5000)
+        fruit_spawned = False
+
+    for key, ghost in ghosts.items():
+        if check_collision(pacman_pos, ghost["pos"]):
+            if current_ghost_mode == "frightened":
+                ghost["pos"] = ghosts_start_pos[key]["pos"][:]
+                score += 200
+            else:
+                lives -= 1
+                pacman_pos = pacman_start_pos[:]
+                if lives == 0:
+                    running = False
+
+    mode_timer += 1
+    if current_ghost_mode == "frightened" and mode_timer > 40:
+        current_ghost_mode = "scatter"
+        mode_timer = 0
+    elif mode_timer > 200:
+        current_ghost_mode = "chase" if current_ghost_mode == "scatter" else "scatter"
+        mode_timer = 0
+
+    move_ghosts()
+
+    screen.fill(BLACK)
+    draw_maze()
+    draw_pacman()
+    draw_ghosts()
+
+    if fruit_spawned:
+        screen.blit(current_fruit, (fruit_pos[0] * GRID_SIZE, fruit_pos[1] * GRID_SIZE))
+    else:
+        if random.randint(0, 1000) < 10:
+            fruit_spawned = True
+            fruit_timer = 0
+            current_fruit = random.choice(fruit_images)
+            fruit_pos = [random.randint(0, 27), random.randint(0, 30)]
+
+    if fruit_spawned:
+        fruit_timer += 1
+        if fruit_timer > 300:
+            fruit_spawned = False
+
+    draw_score()
+    pygame.display.flip()
+    clock.tick(10)
+
+pygame.quit()
