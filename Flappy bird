@@ -1,0 +1,116 @@
+import pygame
+import sys
+import random
+
+# settings
+FPS = 60
+SC_WIDTH = 500
+SC_HEIGHT = 700
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BIRD_COLOR = (255, 255, 0)
+PIPE_COLOR = (0, 255, 0)
+BACKGROUND_COLOR = (135, 206, 250)
+
+# bird
+BIRD_WIDTH = 50
+BIRD_HEIGHT = 35
+GRAVITY = 0.6
+FLAP_STRENGTH = -10
+
+# pipes
+PIPE_WIDTH = 80
+PIPE_HEIGHT = SC_HEIGHT // 2
+GAP_SIZE = 200
+PIPE_SPEED = 5
+
+class Bird(pygame.sprite.Sprite):
+
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((BIRD_WIDTH, BIRD_HEIGHT))
+        self.image.fill(BIRD_COLOR)
+        self.rect = self.image.get_rect()
+        self.rect.center = (SC_WIDTH // 4, SC_HEIGHT // 2)
+        self.y_speed = 0
+
+    def update(self):
+        self.y_speed += GRAVITY
+        self.rect.y += int(self.y_speed)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            self.y_speed = FLAP_STRENGTH
+
+        if self.rect.top < 0:
+            self.rect.top = 0
+            self.y_speed = 0
+        if self.rect.bottom > SC_HEIGHT:
+            self.rect.bottom = SC_HEIGHT
+            self.y_speed = 0
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+
+class Pipe(pygame.sprite.Sprite):
+    
+    def __init__(self, x, y, height, upside_down=False):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((PIPE_WIDTH, height))
+        self.image.fill(PIPE_COLOR)
+        self.rect = self.image.get_rect()
+        if upside_down:
+            self.rect.bottomleft = (x, y)
+        else:
+            self.rect.topleft = (x, y)
+        self.speed = PIPE_SPEED
+
+    def update(self):
+        self.rect.x -= self.speed
+        if self.rect.right < 0:
+            self.kill()
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+
+# создание объектов
+pygame.init()
+screen = pygame.display.set_mode((SC_WIDTH, SC_HEIGHT))
+clock = pygame.time.Clock()
+bird = Bird()
+pipes = pygame.sprite.Group()
+
+def create_pipes():
+    gap_y = random.randint(150, SC_HEIGHT - 150)
+    pipe_top = Pipe(SC_WIDTH, gap_y, SC_HEIGHT - gap_y, upside_down=True)
+    pipe_bottom = Pipe(SC_WIDTH, gap_y + GAP_SIZE, SC_HEIGHT - gap_y)
+    pipes.add(pipe_top)
+    pipes.add(pipe_bottom)
+
+# главный цикл
+pipe_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(pipe_timer, 1500)
+
+while True:
+    clock.tick(FPS)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pipe_timer:
+            create_pipes()
+    
+    bird.update()
+    pipes.update()
+    
+    if pygame.sprite.spritecollideany(bird, pipes):
+        pygame.quit()
+        sys.exit()
+    
+    screen.fill(BACKGROUND_COLOR)
+    bird.draw(screen)
+    for pipe in pipes:
+        pipe.draw(screen)
+    pygame.display.update()
