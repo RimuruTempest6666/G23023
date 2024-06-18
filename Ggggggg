@@ -1,0 +1,244 @@
+import pygame
+import random
+import sys
+
+# Константы
+SCREEN_WIDTH = 448
+SCREEN_HEIGHT = 496
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+PINK = (255, 182, 193)
+CYAN = (0, 255, 255)
+ORANGE = (255, 165, 0)
+YELLOW = (255, 255, 0)
+BLUE = (0, 0, 255)
+
+# Размер ячейки в лабиринте
+CELL_SIZE = 16
+
+# Лабиринт
+maze = [
+    "############################",
+    "#............##............#",
+    "#.####.#####.##.#####.####.#",
+    "#.####.#####.##.#####.####.#",
+    "#.####.#####.##.#####.####.#",
+    "#..........................#",
+    "#.####.##.########.##.####.#",
+    "#.####.##.########.##.####.#",
+    "#......##....##....##......#",
+    "######.##### ## #####.######",
+    "     #.##### ## #####.#     ",
+    "     #.##          ##.#     ",
+    "     #.## ###  ### ##.#     ",
+    "######.## #      # ##.######",
+    "      .   #      #   .      ",
+    "######.## ######## ##.######",
+    "     #.##          ##.#     ",
+    "     #.## ######## ##.#     ",
+    "     #.## ######## ##.#     ",
+    "######.## ######## ##.######",
+    "#............##............#",
+    "#.####.#####.##.#####.####.#",
+    "#.####.#####.##.#####.####.#",
+    "#......##....##....##......#",
+    "######.##.########.##.######",
+    "######.##.########.##.######",
+    "#..........................#",
+    "############################"
+]
+
+class Game:
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Pac-Man")
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font(None, 36)
+        self.reset()
+
+    def reset(self):
+        self.score = 0
+        self.lives = 3
+        self.pacman = PacMan(112, 184)
+        self.ghosts = [
+            Ghost(112, 96, RED),  # Blinky
+            Ghost(112, 112, PINK), # Pinky
+            Ghost(128, 112, CYAN), # Inky
+            Ghost(128, 96, ORANGE) # Clyde
+        ]
+        self.pellets = []
+        self.power_pellets = []
+        for y, row in enumerate(maze):
+            for x, cell in enumerate(row):
+                if cell == ".":
+                    self.pellets.append(Pellet(x * CELL_SIZE, y * CELL_SIZE))
+                elif cell == "o":
+                    self.power_pellets.append(PowerPellet(x * CELL_SIZE, y * CELL_SIZE))
+
+    def run(self):
+        while True:
+            self.handle_events()
+            self.update()
+            self.draw()
+            self.clock.tick(60)
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+    def update(self):
+        self.pacman.update()
+        for ghost in self.ghosts:
+            ghost.update(self.pacman)
+        self.check_collisions()
+        if not self.pellets and not self.power_pellets:
+            self.show_message("You Win!")
+            pygame.time.wait(2000)
+            self.reset()
+
+    def check_collisions(self):
+        for pellet in self.pellets:
+            if self.pacman.rect.colliderect(pellet.rect):
+                self.pellets.remove(pellet)
+                self.score += 10
+        for power_pellet in self.power_pellets:
+            if self.pacman.rect.colliderect(power_pellet.rect):
+                self.power_pellets.remove(power_pellet)
+                self.score += 50
+                for ghost in self.ghosts:
+                    ghost.frightened = True
+        for ghost in self.ghosts:
+            if self.pacman.rect.colliderect(ghost.rect):
+                if ghost.frightened:
+                    self.score += 200
+                    ghost.reset()
+                else:
+                    self.lives -= 1
+                    if self.lives == 0:
+                        self.show_message("Game Over")
+                        pygame.time.wait(2000)
+                        self.reset()
+                    else:
+                        self.pacman.reset()
+                        for ghost in self.ghosts:
+                            ghost.reset()
+
+    def draw(self):
+        self.screen.fill(BLACK)
+        for y, row in enumerate(maze):
+            for x, cell in enumerate(row):
+                if cell == "#":
+                    pygame.draw.rect(self.screen, BLUE, pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        for pellet in self.pellets:
+            pellet.draw(self.screen)
+        for power_pellet in self.power_pellets:
+            power_pellet.draw(self.screen)
+        self.pacman.draw(self.screen)
+        for ghost in self.ghosts:
+            ghost.draw(self.screen)
+        self.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 30)
+        self.draw_text(f"Lives: {self.lives}", SCREEN_WIDTH - 100, SCREEN_HEIGHT - 30)
+        pygame.display.flip()
+
+    def draw_text(self, text, x, y):
+        text_surface = self.font.render(text, True, WHITE)
+        self.screen.blit(text_surface, (x, y))
+
+    def show_message(self, message):
+        self.screen.fill(BLACK)
+        self.draw_text(message, SCREEN_WIDTH // 2 - 60, SCREEN_HEIGHT // 2 - 10)
+        pygame.display.flip()
+
+class PacMan:
+    def __init__(self, x, y):
+        self.image = pygame.Surface((CELL_SIZE, CELL_SIZE))
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+        self.direction = pygame.Vector2(0, 0)
+
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.direction = pygame.Vector2(-1, 0)
+        elif keys[pygame.K_RIGHT]:
+            self.direction = pygame.Vector2(1, 0)
+        elif keys[pygame.K_UP]:
+            self.direction = pygame.Vector2(0, -1)
+        elif keys[pygame.K_DOWN]:
+            self.direction = pygame.Vector2(0, 1)
+        self.move()
+
+    def move(self):
+        self.rect.topleft += self.direction * CELL_SIZE
+        if maze[self.rect.top // CELL_SIZE][self.rect.left // CELL_SIZE] == "#":
+            self.rect.topleft -= self.direction * CELL_SIZE
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def reset(self):
+        self.rect.topleft = (112, 184)
+        self.direction = pygame.Vector2(0, 0)
+
+class Ghost:
+    def __init__(self, x, y, color):
+        self.image = pygame.Surface((CELL_SIZE, CELL_SIZE))
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+        self.color = color
+        self.reset()
+
+    def update(self, pacman):
+        if self.frightened:
+            self.move_away_from(pacman)
+        else:
+            self.chase(pacman)
+
+    def chase(self, pacman):
+        if self.rect.x < pacman.rect.x:
+            self.rect.x += CELL_SIZE
+        elif self.rect.x > pacman.rect.x:
+            self.rect.x -= CELL_SIZE
+        if self.rect.y < pacman.rect.y:
+            self.rect.y += CELL_SIZE
+        elif self.rect.y > pacman.rect.y:
+            self.rect.y -= CELL_SIZE
+
+    def move_away_from(self, pacman):
+        if self.rect.x < pacman.rect.x:
+            self.rect.x -= CELL_SIZE
+        elif self.rect.x > pacman.rect.x:
+            self.rect.x += CELL_SIZE
+        if self.rect.y < pacman.rect.y:
+            self.rect.y -= CELL_SIZE
+        elif self.rect.y > pacman.rect.y:
+            self.rect.y += CELL_SIZE
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def reset(self):
+        self.rect.topleft = (112, 96)
+        self.frightened = False
+
+class Pellet:
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, CELL_SIZE // 2, CELL_SIZE // 2)
+
+    def draw(self, screen):
+        pygame.draw.ellipse(screen, WHITE, self.rect)
+
+class PowerPellet(Pellet):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
+
+if __name__ == "__main__":
+    game = Game()
+    game.run()
