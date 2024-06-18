@@ -1,0 +1,116 @@
+import pygame
+import sys
+import random
+
+# Constants
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 480
+GRID_SIZE = 32
+BG_COLOR = (0, 0, 0)
+PACMAN_COLOR = (255, 255, 0)
+FOOD_COLOR = (255, 255, 255)
+
+class Pacman(pygame.sprite.Sprite):
+
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((GRID_SIZE, GRID_SIZE))
+        self.image.fill(PACMAN_COLOR)
+        self.rect = self.image.get_rect()
+        self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        self.speed = 3
+        self.direction = "left"
+
+    def update(self):
+        if self.direction == "left":
+            self.rect.x -= self.speed
+        elif self.direction == "right":
+            self.rect.x += self.speed
+        elif self.direction == "up":
+            self.rect.y -= self.speed
+        elif self.direction == "down":
+            self.rect.y += self.speed
+
+        # Wrap around screen edges
+        if self.rect.right < 0:
+            self.rect.left = SCREEN_WIDTH
+        elif self.rect.left > SCREEN_WIDTH:
+            self.rect.right = 0
+        elif self.rect.bottom < 0:
+            self.rect.top = SCREEN_HEIGHT
+        elif self.rect.top > SCREEN_HEIGHT:
+            self.rect.bottom = 0
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+class Food(pygame.sprite.Sprite):
+
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((GRID_SIZE, GRID_SIZE))
+        self.image.fill(FOOD_COLOR)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+# Initialize pygame
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()
+
+# Create sprites
+pacman = Pacman()
+all_sprites = pygame.sprite.Group()
+all_food = pygame.sprite.Group()
+
+# Generate food
+for i in range(10):
+    x = random.randint(0, SCREEN_WIDTH - GRID_SIZE)
+    y = random.randint(0, SCREEN_HEIGHT - GRID_SIZE)
+    food = Food(x, y)
+    all_sprites.add(food)
+    all_food.add(food)
+
+all_sprites.add(pacman)
+
+# Main game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                pacman.direction = "left"
+            elif event.key == pygame.K_RIGHT:
+                pacman.direction = "right"
+            elif event.key == pygame.K_UP:
+                pacman.direction = "up"
+            elif event.key == pygame.K_DOWN:
+                pacman.direction = "down"
+
+    pacman.update()
+
+    # Check collision with food
+    food_collisions = pygame.sprite.spritecollide(pacman, all_food, True)
+    for food in food_collisions:
+        x = random.randint(0, SCREEN_WIDTH - GRID_SIZE)
+        y = random.randint(0, SCREEN_HEIGHT - GRID_SIZE)
+        new_food = Food(x, y)
+        all_sprites.add(new_food)
+        all_food.add(new_food)
+
+    # Draw everything
+    screen.fill(BG_COLOR)
+    all_sprites.draw(screen)
+    pygame.display.flip()
+
+    # Cap the frame rate
+    clock.tick(10)
+
+pygame.quit()
+sys.exit()
